@@ -7,7 +7,7 @@
 # En el caso de no ingresar coordenadas:latitud y longitud devuelve toda la grilla
 
 
-process_era5 <- function (path='D:/Josefina/Proyectos/ERA/dataset/',lat,long,fecha_ingresada, tipo,variable=NA){
+process_era5 <- function (path='D:/Josefina/Proyectos/ERA/dataset/',lat=NA,long=NA,fecha_ingresada, tipo){
   df_mean_dia_salida<- data.frame()
   rbind_dia_coords_2 <- data.frame()
   crs_project = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
@@ -37,7 +37,7 @@ process_era5 <- function (path='D:/Josefina/Proyectos/ERA/dataset/',lat,long,fec
     # Get the data sets
     sds <- get_subdatasets(file.name)
 
-    for (num_sds in 1:3){#length(sds)){
+    for (num_sds in 1:2){#length(sds)){
       print(sds)
     # Get orbit information
       name_sds<- substring(sds[num_sds],31)
@@ -158,7 +158,7 @@ process_era5 <- function (path='D:/Josefina/Proyectos/ERA/dataset/',lat,long,fec
     }
     return(rbind_dia_coords_salida)
   } 
-
+  #return(rbind_dia_coords_salida)
 
 }
 
@@ -168,8 +168,8 @@ prueba <- process_era5 (path='D:/Josefina/Proyectos/ERA/dataset/',lat=-32.91051,
                         long = -68.864, fecha_ingresada = "2016-07-03" )
 prueba_na <- process_era5 (path='D:/Josefina/Proyectos/ERA/dataset/',lat=NA, 
                         long = NA, fecha_ingresada = "2016-07-03" )
-
-
+05:43
+06:00
 
 
 
