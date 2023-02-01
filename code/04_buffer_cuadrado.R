@@ -2,14 +2,17 @@
 # ------------        FUNCION PARA HACER UNA GRILLA CUADRADA       ------------- 
 
 grilla_cuadrada <- function(df){
-  coordinates(df) <- ~x+y
-  proj4string(df) <- CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
-  writeOGR(df,".","temporal", driver="ESRI Shapefile")
+  df_mod <- df
+  coordinates(df_mod ) <- ~x+y
+  proj4string(df_mod ) <- CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+  writeOGR(df_mod ,".","temporal", driver="ESRI Shapefile")
+  #Puntos de intres a trnsformar
   punto <- st_read("./temporal.shp",quiet = TRUE)
   st_crs(punto) = 4326  
-  
-  
-  df_trans<-spTransform(df, CRS("+proj=utm +zone=19 +south +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"))
+  # puntos interes re-proyectados a UTM
+  df_trans<-st_transform(punto,crs = 32519)
+  #df_trans<-spTransform(punto, CRS("+proj=utm +zone=19 +south +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"))
+  file.remove(file.path(".", dir(path="." ,pattern="temporal.*")))
   buffer_square <- function(point, length, degree = 360){
     return(buffer_rectangle(point, length, length, degree))  
   }
@@ -63,11 +66,10 @@ grilla_cuadrada <- function(df){
     if(i%%100 == 0){
       print(paste("archivo i", i))
     }
-    example_point = sf::st_point(a)
-    example_point = sf::st_sfc(a)
-    example_point = sf::st_sf(a)
+
+    example_point = sf::st_sf(df_trans)
     
-    c <- example_point3[i,1]
+    c <- example_point[i,1]
     buffer_square(c, 350, 0) -> square_shaped_buffer
     sf_object = square_shaped_buffer %>%
       st_sf %>%
@@ -78,13 +80,30 @@ grilla_cuadrada <- function(df){
   
   st_crs(rbind_buffer) =32519
   salida<-st_transform(rbind_buffer,crs = 4326)
-  interseccion_punto_ERA <- st_intersection(punto,salida)
-  m
-  return(salida)
-  #st_write(salida,"rbind_buffer_final5.shp")
+  rbind_salida<- data.frame()
+  for (j in 1:nrow(salida)){
+    if(j%%100 == 0){
+      print(paste("archivo j", j))
+    }
+    df_salida <- data.frame(
+      date = df$date[j],
+      x = df$x[j],
+      y = df$y[j],
+      mean = df$mean[j],
+      unidad = df$unidad[j],
+      nombre_var = df$nombre_var[j],
+      
+      geometry = salida$geometry[j])
+    rbind_salida <- rbind(rbind_salida,df_salida)
+    
+  }
+  z<-st_as_sf(rbind_salida, crs = 4326)
+  return(z)
+
 
 }
 
-prueba <- grilla_cuadrada(point_era_UTM)
+prueba <- grilla_cuadrada(mean_dia_subst)
 
-st_write(prueba ,"rbind_buffe.shp")
+st_write(prueba,"prueba.shp")
+
