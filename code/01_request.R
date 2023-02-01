@@ -2,6 +2,7 @@
 #######################################################################
 # ------------             DESCARGA Y PROCESAMIENTO DATOS ERA     -------------
 #https://confluence.ecmwf.int/display/CUSF/Download+CDS+ERA5+data+using+R
+#https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview
 download_era5 <- function(fecha,uid,key, path){
   fecha<- fecha
   hora_format <-  as.POSIXct(strptime(fecha, format = "%Y-%m-%d"))
@@ -17,9 +18,8 @@ download_era5 <- function(fecha,uid,key, path){
     dataset_short_name = "reanalysis-era5-single-levels",
     product_type   = "reanalysis",
     format = "netcdf",
-    variable = c('10m_u_component_of_wind', '10m_v_component_of_wind', #'2m_dewpoint_temperature',
-                 'boundary_layer_height', 'evaporation', 'surface_pressure',
-                 'total_precipitation'),
+    variable = c("2m_temperature",'2m_dewpoint_temperature','surface_pressure','10m_u_component_of_wind', '10m_v_component_of_wind', #'2m_dewpoint_temperature',
+                'boundary_layer_height', 'total_precipitation'),#, This parameter is the temperature to which the air, at 2 metres above the surface of the Earth, would have to be cooled for saturation to occur. It is a measure of the humidity of the air. Combined with temperature and pressure, it can be used to calculate the relative humidity.
     year = year,
     month = month,
     day = day,
@@ -39,4 +39,10 @@ download_era5 <- function(fecha,uid,key, path){
                      verbose = TRUE)
 }
 # hasta 2 dias para atras
-download_era5 (fecha = "2018-01-20",uid ="134318",path = "D:/Josefina/Proyectos/ERA/dataset",key="2045f203-20ba-43fc-b338-e242d5431485")
+download_era5 (fecha = "2018-01-01",uid ="134318",path = "D:/Josefina/Proyectos/ERA/dataset",key="2045f203-20ba-43fc-b338-e242d5431485")
+download_era5 (fecha = "2018-01-02",uid ="134318",path = "D:/Josefina/Proyectos/ERA/dataset",key="2045f203-20ba-43fc-b338-e242d5431485")
+download_era5 (fecha = "2018-01-03",uid ="134318",path = "D:/Josefina/Proyectos/ERA/dataset",key="2045f203-20ba-43fc-b338-e242d5431485")
+download_era5 (fecha = "2018-01-04",uid ="134318",path = "D:/Josefina/Proyectos/ERA/dataset",key="2045f203-20ba-43fc-b338-e242d5431485")
+download_era5 (fecha = "2018-01-05",uid ="134318",path = "D:/Josefina/Proyectos/ERA/dataset",key="2045f203-20ba-43fc-b338-e242d5431485")
+download_era5 (fecha = "2018-01-06",uid ="134318",path = "D:/Josefina/Proyectos/ERA/dataset",key="2045f203-20ba-43fc-b338-e242d5431485")
+download_era5 (fecha = "2018-01-07",uid ="134318",path = "D:/Josefina/Proyectos/ERA/dataset",key="2045f203-20ba-43fc-b338-e242d5431485")

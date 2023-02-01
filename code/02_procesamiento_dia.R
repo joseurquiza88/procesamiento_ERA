@@ -7,7 +7,7 @@
 # En el caso de no ingresar coordenadas:latitud y longitud devuelve toda la grilla
 
 
-process_era5 <- function (path,lat,long,fecha_ingresada){
+process_era5 <- function (path='D:/Josefina/Proyectos/ERA/dataset/',lat,long,fecha_ingresada, tipo,variable=NA){
   df_mean_dia_salida<- data.frame()
   rbind_dia_coords_2 <- data.frame()
   crs_project = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
@@ -27,6 +27,7 @@ process_era5 <- function (path,lat,long,fecha_ingresada){
   fecha_era <- substr(id_lista,1,10) 
   fecha_buscada <- which(fecha_era == fecha_ingresada)
   id <- id_lista[fecha_buscada]
+  rbind_dia_coords <- data.frame()
   for (i in 1:length(id)){
     
 
@@ -35,8 +36,8 @@ process_era5 <- function (path,lat,long,fecha_ingresada){
     file.name = id[i]
     # Get the data sets
     sds <- get_subdatasets(file.name)
-    rbind_dia_coords <- data.frame()
-    for (num_sds in 1:length(sds)){
+
+    for (num_sds in 1:3){#length(sds)){
       print(sds)
     # Get orbit information
       name_sds<- substring(sds[num_sds],31)
@@ -103,13 +104,25 @@ process_era5 <- function (path,lat,long,fecha_ingresada){
           nombre_var = dat_agrupado[[j]][["nombre_var"]][1])
         df_mean_dia <- rbind(  df_mean_dia,df_grilla)
       }
-      df_mean_dia_salida <- rbind(df_mean_dia_salida,df_mean_dia)
+      #df_mean_dia_salida <- rbind(df_mean_dia_salida,df_mean_dia)
       #Hago buffer para tomar las coordenadas ingresadas
-    }
-    if (is.na(lat)){
-      return(df_mean_dia_salida )
-    }else{
+    #}
+    
+    # ############################################################################
+    # #                          Hasta acaProcesamiento Obligatorio
+    # ############################################################################
+    # if (is.na(lat) & tipo = df){
+    #   return(df_mean_dia_salida )
+    # }
+    # if (is.na(lat) & tipo = plot){
+    #   #   --- Filtramos dato
+    #   mean_dia_subst <- df_mean_dia_salida [df_mean_dia_salida$nombre_var == variable,]
+    #   prueba <- grilla_cuadrada(mean_dia_subst)
+    #   
+    # }
+    # else{
       coordinates(df_mean_dia) <- ~x+y
+      
       proj4string(df_mean_dia) <- CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
       writeOGR(df_mean_dia,".","temp_dia", driver="ESRI Shapefile")
       point_era <- st_read("temp_dia.shp",quiet = TRUE) 
@@ -141,12 +154,12 @@ process_era5 <- function (path,lat,long,fecha_ingresada){
                                           rbind_dia_coords$nombre_var[7])
       
       
-      return(rbind_dia_coords_salida)
+      
     }
+    return(rbind_dia_coords_salida)
   } 
 
 
-  
 }
 
 
@@ -159,11 +172,6 @@ prueba_na <- process_era5 (path='D:/Josefina/Proyectos/ERA/dataset/',lat=NA,
 
 
 
-
-
-#nombre <-paste("./proceed/",name_sds,"/",id[i],"_",name_sds,".csv",sep = "")
-
-#write.csv(df_mean_dia  ,nombre)
 
 
 
