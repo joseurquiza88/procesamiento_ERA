@@ -39,7 +39,7 @@ download_era5 <- function(fecha,uid,key, path){
                      verbose = TRUE)
 }
 # hasta 2 dias para atras
-download_era5 (fecha = "2018-01-01",uid ="134318",path = "D:/Josefina/Proyectos/ERA/dataset",key="2045f203-20ba-43fc-b338-e242d5431485")
+download_era5 (fecha = "2023-01-27",uid ="134318",path = "D:/Josefina/Proyectos/ERA/dataset",key="2045f203-20ba-43fc-b338-e242d5431485")
 download_era5 (fecha = "2018-01-02",uid ="134318",path = "D:/Josefina/Proyectos/ERA/dataset",key="2045f203-20ba-43fc-b338-e242d5431485")
 download_era5 (fecha = "2018-01-03",uid ="134318",path = "D:/Josefina/Proyectos/ERA/dataset",key="2045f203-20ba-43fc-b338-e242d5431485")
 download_era5 (fecha = "2018-01-04",uid ="134318",path = "D:/Josefina/Proyectos/ERA/dataset",key="2045f203-20ba-43fc-b338-e242d5431485")

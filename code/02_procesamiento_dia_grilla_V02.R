@@ -7,7 +7,7 @@
 # En el caso de no ingresar coordenadas:latitud y longitud devuelve toda la grilla
 
 
-process_era5_grilla <- function (path='D:/Josefina/Proyectos/ERA/dataset/',lat=NA,long=NA,fecha_ingresada, tipo=NA,var_interes=NA){
+process_era5_grilla<- function (path='D:/Josefina/Proyectos/ERA/dataset/',lat=NA,long=NA,fecha_ingresada, tipo=NA,var_interes=NA){
   df_mean_dia_salida<- data.frame()
 
   crs_project = "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
@@ -32,16 +32,14 @@ process_era5_grilla <- function (path='D:/Josefina/Proyectos/ERA/dataset/',lat=N
     
     
     
-    print(paste("Esto es i = ", i, sep= ""))
+    #print(paste("Esto es i = ", i, sep= ""))
     file.name = id[i]
     # Get the data sets
     sds <- get_subdatasets(file.name)
     
-    for (num_sds in 1:length(sds)){
 
       # Get orbit information
-      name_sds<- substring(sds[num_sds],31)
-      MIRRAraster <- raster(file.name,varname=name_sds)
+      MIRRAraster <- raster(file.name,varname=var_interes)
       num_bands <- nbands(MIRRAraster)
       # --- For each orbit --- #
       
@@ -50,11 +48,11 @@ process_era5_grilla <- function (path='D:/Josefina/Proyectos/ERA/dataset/',lat=N
       #24 hs
       
       for (nband in 1:num_bands) {
-        if(nband %%20==0){
-          print(print(paste("Esto es nband = ", nband, sep= "")))
-        }
+        # if(nband %%20==0){
+        #   #print(print(paste("Esto es nband = ", nband, sep= "")))
+        # }
         
-        MIRRAraster <- raster(file.name,varname=name_sds,b=nband)
+        MIRRAraster <- raster(file.name,varname=var_interes,b=nband)
    
         unidad <-  MIRRAraster@data@unit
         t <- MIRRAraster@z[[1]]
@@ -75,7 +73,7 @@ process_era5_grilla <- function (path='D:/Josefina/Proyectos/ERA/dataset/',lat=N
         df<- raster::as.data.frame(data_recorte, xy = T)
         df$tiempo <- t
         df$unidad <- unidad
-        df$variable <-name_sds
+        df$variable <-var_interes
         df$date <- substr(df$tiempo,1,10)
         df$hora <- substr(df$tiempo,12,19)
         names(df) <- c("x","y","valor","fecha","unidad","nombre_var","date","hora") 
@@ -104,24 +102,24 @@ process_era5_grilla <- function (path='D:/Josefina/Proyectos/ERA/dataset/',lat=N
           nombre_var = dat_agrupado[[j]][["nombre_var"]][1])
         df_mean_dia <- rbind(  df_mean_dia,df_grilla)
       }
-      df_mean_dia_salida <- rbind(df_mean_dia_salida,df_mean_dia)
-      #Hago buffer para tomar las coordenadas ingresadas
-      }
+
       
       # ############################################################################
       # #                          Hasta acaProcesamiento Obligatorio
       # ############################################################################
     if (tipo == "df"){
-      return(df_mean_dia_salida )
+      return(df_mean_dia)
     }
     #   ---
     if (tipo == "plot"){
       #   --- .shp con toda la grilla segun variable de interes
-      mean_dia_subst <- df_mean_dia_salida [df_mean_dia_salida$nombre_var == var_interes,]
-      if(mean_dia_subst$nombre_var == "t2m"){
-        mean_dia_subst$mean <- mean_dia_subst$mean - 273.15
+      if(df_mean_dia$nombre_var == "t2m"){
+        df_mean_dia$mean <- df_mean_dia$mean - 273.15
       }
-      buffer_mean_dia <- grilla_cuadrada(mean_dia_subst)
+      if(df_mean_dia$nombre_var == "d2m"){
+        df_mean_dia$mean <- df_mean_dia$mean - 273.15
+      }
+      buffer_mean_dia <- grilla_cuadrada(df_mean_dia)
       return(buffer_mean_dia )
     }
   }
@@ -129,7 +127,7 @@ process_era5_grilla <- function (path='D:/Josefina/Proyectos/ERA/dataset/',lat=N
 }
 
 #Pruebas ejemplo
-prueba_plot <- process_era5_grilla (path='D:/Josefina/Proyectos/ERA/dataset/',lat=NA, 
-                        long = NA, fecha_ingresada = "2016-07-03",tipo = "plot",var_interes <- "t2m")
+prueba_plot2 <- process_era5_grilla_V2 (path='D:/Josefina/Proyectos/ERA/dataset/',lat=NA, 
+                        long = NA, fecha_ingresada = "2016-07-03",tipo = "plot",var_interes <- "d2m")
 prueba_df <- process_era5 (path='D:/Josefina/Proyectos/ERA/dataset/',lat=NA, 
                         long = NA, fecha_ingresada = "2016-07-03",tipo = "df",var_interes <- "t2m")

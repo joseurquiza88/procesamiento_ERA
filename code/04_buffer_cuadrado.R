@@ -2,6 +2,7 @@
 # ------------        FUNCION PARA HACER UNA GRILLA CUADRADA       ------------- 
 
 grilla_cuadrada <- function(df){
+  print("Funcion grilla cuadrada")
   df_mod <- df
   coordinates(df_mod ) <- ~x+y
   proj4string(df_mod ) <- CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
@@ -63,9 +64,7 @@ grilla_cuadrada <- function(df){
   }
   rbind_buffer<- data.frame()
   for (i in 1:nrow(df_trans)){
-    if(i%%100 == 0){
-      print(paste("archivo i", i))
-    }
+    
 
     example_point = sf::st_sf(df_trans)
     
@@ -82,9 +81,7 @@ grilla_cuadrada <- function(df){
   salida<-st_transform(rbind_buffer,crs = 4326)
   rbind_salida<- data.frame()
   for (j in 1:nrow(salida)){
-    if(j%%100 == 0){
-      print(paste("archivo j", j))
-    }
+
     df_salida <- data.frame(
       date = df$date[j],
       x = df$x[j],
@@ -103,6 +100,8 @@ grilla_cuadrada <- function(df){
 
 }
 
+
+# Pruebas funcion
 prueba <- grilla_cuadrada(mean_dia_subst)
 
 st_write(prueba,"prueba.shp")
